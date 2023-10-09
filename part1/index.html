@@ -354,9 +354,9 @@ class: middle, left
 
 # putting it all together
 
-Update our `Dog` struct to include a `size` attribute and implement a method
-on `Dog` called `feed` to print `"Please feed me <amount>"` to the screen
-based on the dog's size.
+Update our `Dog` struct to include a `size` attribute and update our `say_hi` 
+method to include `"Please feed me <amount>"`, where `amount` is based on the
+dog's size.
 
 ---
 class: middle, left
@@ -372,11 +372,117 @@ a Type and an Error Type inside, e.g. `Result<String, MyError>`.
 For example:
 
 ```rust
-fn parse_name(name: Option<&str>) -> Result<String, MyError> {
-  match name {
-    Some(n) => Ok(n),
-    None => Err("You must provide a name),
-  }
+fn check_portion(&self, amount: u32) -> Result<(), MyError> {
+    let expected = self.food_portion();
+    if amount == expected {
+        Ok(())
+    } else {
+        Err(MyError)
+    }
+}
+```
+
+---
+class: middle, left
+
+## error handling in Rust: `thiserror` and `anyhow`
+
+- `thiserror`: create custom error types
+- `anyhow`: don't worry about error types
+
+
+---
+class: middle, left
+
+# `thiserror`
+
+- add `thiserror` as a library: `cargo add thiserror`
+- import it into your project using `use`
+
+```rust
+use thiserror::Error;
+
+#[derive(Debug, Error)]
+enum DogError {
+    #[error("incorrect food amount")]
+    IncorrectFoodAmount,
+}
+```
+
+---
+class: middle, left
+
+# using our custom error
+
+```rust
+impl DogSize {
+    fn check_portion(&self, amount: u32) -> Result<String, DogError> {
+        let expected = self.food_portion();
+        if amount == expected {
+            Ok("Perfect".to_string())
+        } else {
+            Err(DogError::IncorrectFoodAmount)
+        }
+    }
+}
+```
+
+---
+class: middle, left
+
+# add more info to our error
+
+```rust
+#[derive(Debug, Error)]
+enum DogError {
+    #[error("incorrect food amount. expected: {expected:?} given: {given:?}")]
+    IncorrectFoodAmount { expected: u32, given: u32 },
+}
+```
+
+```rust
+if amount == expected {
+    Ok("Perfect".to_string())
+} else {
+    Err(DogError::IncorrectFoodAmount { expected, given: amount})
+}
+```
+
+---
+class: middle, left
+
+# the `?` operator
+
+If a function returns an `Option` or a `Result` you can use the `?` operator
+to "bubble" up any `None` or `Error` if they happen, but otherwise proceed
+normally. This is different from `unwrap` because it won't panic immediately.
+
+Here, `check_portion` returns a `Result` and so does the containing function
+`feed`.
+
+```rust
+pub fn feed(&self, amount: u32) -> Result<(), DogError> {
+    let msg = self.size.check_portion(amount)?;
+    println!("{msg}");
+    Ok(())
+}
+```
+
+---
+class: middle, left
+
+# handle the error!
+
+To handle the error, we can match on our result and print the error. Note that
+we use `eprintln!`.
+
+Many libraries will include functionality that allow you to return a `Result`
+from you main function and will do this for you.
+
+```
+match dog.feed(1) {
+    Ok(_) => println!("A fed dog is a happy dog."),
+    Err(e) => eprintln!("{}", e.to_string()),
 }
 ```
 
