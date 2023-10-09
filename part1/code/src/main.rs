@@ -57,7 +57,7 @@ impl DogSize {
     }
 }
 
-fn main() -> Result<(), DogError>{
+fn main() {
     let mateo = Dog::new("Mateo", 4, DogSize::Large);
     let lu = Dog::new("Lu", 1, DogSize::Small);
     let dogs = [&mateo, &lu];
@@ -65,8 +65,9 @@ fn main() -> Result<(), DogError>{
     for dog in dogs {
         let message = dog.say_hi();
         println!("{message}");
-        dog.feed(1)?;
+        match dog.feed(1) {
+            Ok(_) => println!("A fed dog is a happy dog."),
+            Err(e) => eprintln!("{}", e.to_string()),
+        }
     }
-
-    Ok(())
 }
