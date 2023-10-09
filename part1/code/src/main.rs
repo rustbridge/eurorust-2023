@@ -30,7 +30,9 @@ impl Dog {
     }
 
     pub fn feed(&self, amount: u32) -> Result<(), DogError> {
-        Ok(self.size.check_portion(amount)?)
+        let msg = self.size.check_portion(amount)?;
+        println!("{msg}");
+        Ok(())
     }
 }
 
@@ -47,12 +49,15 @@ impl DogSize {
         }
     }
 
-    fn check_portion(&self, amount: u32) -> Result<(), DogError> {
+    fn check_portion(&self, amount: u32) -> Result<String, DogError> {
         let expected = self.food_portion();
         if amount == expected {
-            Ok(())
+            Ok("Perfect!".to_string())
         } else {
-            Err(DogError::IncorrectFoodAmount { expected, given: amount })
+            Err(DogError::IncorrectFoodAmount {
+                expected,
+                given: amount,
+            })
         }
     }
 }
