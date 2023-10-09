@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Title</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<textarea id="source">
+
+class: center, middle
+
+# An introduction to Clap and CLIs
+
+---
+
+## What is a CLI?
+
+- **C**ommand-**L**ine **I**nterface
+
+--
+
+- A CLI is anything that you run in the terminal/on the command line
+
+--
+
+- There's tons of libraries to use for this in Rust! A lot of them serve
+  different purposes
+
+---
+
+## Types of CLI libraries
+
+- **Argument parsing**
+
+```sh
+$ mycommand myarg -f 4 --bool # -> myarg: true, f: 4, bool: true
+```
+
+--
+
+- **Command generation**
+
+```sh
+$ mycommand --help # Usage: mycommand <MYARG>
+```
+
+--
+
+- **Formatting** - for fancy colors, bold/italics/strikethrough text, etc
+
+--
+
+- **Error handling** - important in any Rust project, but especially in CLIs!
+
+--
+
+- Other things for any project - testing, distribution, etc
+
+---
+
+class: center, middle
+
+<img src="https://raw.githubusercontent.com/clap-rs/clap/master/assets/clap.png" width=150 />
+
+# Enter Clap
+
+---
+
+## What is Clap?
+
+- One of the most popular CLI libraries for Rust
+- Very flexible - it'll grow together with your CLI!
+
+--
+
+## Let's start using Clap!
+
+- Create a new project using `cargo new`:
+
+```sh
+cargo new mycoolproject
+# -> new directory: mycoolproject
+```
+
+--
+
+...but how do we use Clap?
+
+--
+
+- Rust has a file where you can declare _dependencies_
+  - Similar to `package.json`, `mix.exs`, `project.clj`, etc
+- Let's go to [crates.io](https://crates.io)!
+
+---
+
+class: middle
+
+```toml
+# in Cargo.toml, add:
+[dependencies]
+clap = { version = "4.4.6", features = ["derive"] }
+```
+
+## or
+
+```sh
+# in the terminal, run:
+$ cargo add clap --features derive
+```
+
+---
+
+## Using Clap
+
+- Clap lets you model your CLI interface **as data!**, using Rust structs and enums
+
+--
+
+- The magic juice is `#[derive(Parser)]`
+
+--
+
+- Even doc-comments get converted to help text automagically!
+
+--
+
+```rust
+use clap::Parser;
+
+#[derive(Parser)]
+struct Arguments {
+  #[arg(long)]
+  myflag: String,
+}
+```
+
+```sh
+$ mycommand --myflag <VALUE>
+```
+
+---
+
+</textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js">
+</script>
+<script>
+  const slideshow = remark.create();
+</script>
+</body>
+</html>
